@@ -1,85 +1,155 @@
 body {
-  height: 100vh !important;
-  overflow: hidden !important;
-  background-color: #22273b !important;
+  background-color: #282c34;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 9px;
+.App {
+  text-align: center;
+  max-width: 728px;
+  margin: 0 auto;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #22273b !important;
-  border-radius: 5px;
+.App header {
+  background-color: #181717;
+  height: 10vh;
+  min-height: 50px;
+  color: white;
+  position: fixed;
+  width: 100%;
+  max-width: 728px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 99;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #151b2d !important;
-  border-radius: 5px;
+.App section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: rgb(40, 37, 53);
 }
 
-.emoji-mart {
-  position: absolute !important;
-  bottom: 70px !important;
+main {
+  padding: 10px;
+  height: 80vh;
+  margin: 10vh 0 10vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
 }
 
-.emoji-mart-preview {
-  display: none !important;
+main::-webkit-scrollbar {
+  width: 0.25rem;
 }
 
-.MuiInputLabel-outlined {
-  color: rgba(173, 173, 173, 0.89) !important;
+main::-webkit-scrollbar-track {
+  background: #1e1e24;
 }
 
-.MuiOutlinedInput-notchedOutline {
-  border: 0 !important;
+main::-webkit-scrollbar-thumb {
+  background: #6649b8;
 }
 
-.MuiInputBase-root {
-  color: rgb(245, 245, 245) !important;
+form {
+  height: 10vh;
+  position: fixed;
+  bottom: 0;
+  background-color: rgb(24, 23, 23);
+  width: 100%;
+  max-width: 728px;
+  display: flex;
+  font-size: 1.5rem;
 }
 
-.MuiInputBase-root.Mui-disabled {
-  color: rgb(255 255 255 / 53%) !important;
-  cursor: default !important;
+form button {
+  width: 20%;
+  background-color: rgb(56, 56, 143);
 }
 
-.MuiDivider-root {
-  background-color: rgb(0 0 0 / 40%) !important;
+
+input {
+  line-height: 1.5;
+  width: 100%;
+  font-size: 1.5rem;
+  background: rgb(58, 58, 58);
+  color: white;
+  outline: none;
+  border: none;
+  padding: 0 10px;
 }
 
-.MuiDialog-paper {
-  overflow-y: visible !important;
-  background-color: #202035 !important;
-  color: #dcddde !important;
-  width: 530px;
+button {
+  background-color: #282c34; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.25rem;
 }
 
-.emoji-mart-dark {
-  color: #fff;
-  border-color: #22273b !important;
-  background-color: #121628 !important;
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.emoji-mart-dark .emoji-mart-category-label span {
-  background-color: #121628 !important;
-  color: #fff;
-  border-radius: 5px;
+
+.sign-in {
+  color: #282c34;
+  background: white;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.emoji-mart-dark .emoji-mart-search input {
-  color: #fff;
-  border-color: #22273b;
-  background-color: #22273b;
+
+
+
+ul, li {
+  text-align: left;
+  list-style: none;
 }
 
-a {
-  color: #e3a7ff;
+p {
+  max-width: 500px;
+  margin-bottom: 12px;
+  line-height: 24px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  position: relative;
+  color: white;
+  text-align: center;
 }
 
-.MuiSnackbarContent-root {
-  background-color: rgb(109 52 125) !important;
+.message {
+  display: flex;
+  align-items: center;
 }
+
+
+.sent {
+  flex-direction: row-reverse;
+}
+
+.sent p {
+  color: white;
+  background: #0b93f6;
+  align-self: flex-end;
+}
+.received p {
+  background: #e5e5ea;
+  color: black;
+}
+
+img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 2px 5px;
+}
+

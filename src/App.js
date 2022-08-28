@@ -1,92 +1,130 @@
-import { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Application from "./Components/Application";
-import Chat from "./Components/Chat";
-import Login from "./Components/SignUp";
-import Home from "./Components/Home";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { auth, db } from "./Firebase/Firebase";
-import "./App.css";
+import React, { useRef, useState } from 'react';
+import './App.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
-  toolbar: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    backgroundColor: "#22273b !important",
-    height: "100vh",
-  },
-}));
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
+import 'firebase/analytics';
+
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+firebase.initializeApp({
+  // your config
+  apiKey: "AIzaSyDOOZmuGZw5g7Z8IpCrmj-20lpBymK4wpA",
+  authDomain: "firechat-ae07a.firebaseapp.com",
+  projectId: "firechat-ae07a",
+  storageBucket: "firechat-ae07a.appspot.com",
+  messagingSenderId: "16224433639",
+  appId: "1:16224433639:web:3eec03240d8b830a35b942",
+  measurementId: "G-WSJJ2RJE62"
+})
+
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+const analytics = firebase.analytics();
+
 
 function App() {
-  const classes = useStyles();
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        db.collection("users")
-          .doc(user.uid)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              console.log("user exits");
-            } else {
-              const details = {
-                name: user.displayName,
-                displayName: user.displayName.split(" ")[0],
-                photoURL: user.photoURL,
-                email: user.email,
-                uid: user.uid,
-              };
-              db.collection("users")
-                .doc(user.uid)
-                .set(details)
-                .then((res) => {
-                  console.log("new user created");
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
-        setUser(user.uid);
-      } else {
-        setUser(null);
-      }
-    });
-  }, []);
+  const [user] = useAuthState(auth);
 
   return (
     <div className="App">
-      <Router>
-        {!user ? (
-          <Login />
-        ) : (
-          <div className={classes.root}>
-            <Application uid={user} />
-            <main className={classes.content}>
-              <div className={classes.toolbar} style={{ minHeight: "50px" }} />
-              <Switch>
-                <Route path="/" exact>
-                  <Home />
-                </Route>
-                <Route path="/channel/:id">
-                  <Chat />
-                </Route>
-              </Switch>
-            </main>
-          </div>
-        )}
-      </Router>
+      <header>
+        <h1>⚛️🔥💬</h1>
+        <SignOut />
+      </header>
+
+      <section>
+        {user ? <ChatRoom /> : <SignIn />}
+      </section>
+
     </div>
   );
 }
+
+function SignIn() {
+
+  const signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  return (
+    <>
+      <button className="sign-in" onClick={signInWithGoogle}>Sign in with Google</button>
+      <p>Do not violate the community guidelines or you will be banned for life!</p>
+    </>
+  )
+
+}
+
+function SignOut() {
+  return auth.currentUser && (
+    <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
+  )
+}
+
+
+function ChatRoom() {
+  const dummy = useRef();
+  const messagesRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt').limit(25);
+
+  const [messages] = useCollectionData(query, { idField: 'id' });
+
+  const [formValue, setFormValue] = useState('');
+
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+
+    const { uid, photoURL } = auth.currentUser;
+
+    await messagesRef.add({
+      text: formValue,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid,
+      photoURL
+    })
+
+    setFormValue('');
+    dummy.current.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  return (<>
+    <main>
+
+      {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+
+      <span ref={dummy}></span>
+
+    </main>
+
+    <form onSubmit={sendMessage}>
+
+      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="say something nice" />
+
+      <button type="submit" disabled={!formValue}>🕊️</button>
+
+    </form>
+  </>)
+}
+
+
+function ChatMessage(props) {
+  const { text, uid, photoURL } = props.message;
+
+  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+
+  return (<>
+    <div className={`message ${messageClass}`}>
+      <img src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} />
+      <p>{text}</p>
+    </div>
+  </>)
+}
+
 
 export default App;
